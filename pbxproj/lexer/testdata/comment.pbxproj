@@ -1,0 +1,4 @@
+// !$*UTF8*$!
+{
+	number /* my comment here */ = 1;
+}

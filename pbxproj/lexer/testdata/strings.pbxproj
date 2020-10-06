@@ -1,0 +1,7 @@
+// !$*UTF8*$!
+{
+	str1 = MyString;
+	str2 = "My String";
+  str3 = "My \"complex\" String";
+}
+

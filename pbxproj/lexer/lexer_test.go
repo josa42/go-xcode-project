@@ -102,6 +102,31 @@ func TestNextToken(t *testing.T) {
 			{token.SEMICOLON, ";"},
 			{token.RBRACE, "}"},
 		}},
+		{"list-numbers", []token.Token{
+			{token.LPAREN, "("},
+			{token.STRING, "1"},
+			{token.COMMA, ","},
+			{token.STRING, "2"},
+			{token.COMMA, ","},
+			{token.STRING, "3"},
+			{token.RPAREN, ")"},
+		}},
+		{"filename", []token.Token{
+			{token.LBRACE, "{"},
+			{token.KEY, "name"},
+			{token.ASSIGN, "="},
+			{token.STRING, "file.swift"},
+			{token.SEMICOLON, ";"},
+			{token.RBRACE, "}"},
+		}},
+		{"comments", []token.Token{
+			{token.LBRACE, "{"},
+			{token.KEY, "key"},
+			{token.ASSIGN, "="},
+			{token.STRING, "1"},
+			{token.SEMICOLON, ";"},
+			{token.RBRACE, "}"},
+		}},
 	}
 
 	for _, tt := range tests {
@@ -110,7 +135,6 @@ func TestNextToken(t *testing.T) {
 
 			l := New(fixture(tt.name))
 
-			// ln := 0
 			tokens := []token.Token{}
 			for {
 				tok := l.NextToken()
@@ -121,63 +145,6 @@ func TestNextToken(t *testing.T) {
 			}
 
 			assert.Equal(t, tt.expect, tokens)
-
-			// var tok token.Token
-			// for tok = ""; tok = l.NextToken(); tok.Type != token.EOF {
-			// 	ln += 1
-			//
-			// 	fmt.Println("lit", tok.Literal)
-			// 	assert.Equal(t, tt.expect[ln], tok)
-			// }
-
-			// assert.Equal(t, len(tt.expect), ln)
-
 		})
 	}
-	//
-	// 	input := `let five = 5;
-	// let ten = 10;
-	//
-	// let add = fn(x, y) {
-	//   x + y;
-	// };
-	//
-	// let result = add(five, ten);
-	// !-/*5;
-	// 5 < 10 > 5;
-	//
-	// if (5 < 10) {
-	// 	return true;
-	// } else {
-	// 	return false;
-	// }
-	//
-	// 10 == 10;
-	// 10 != 9;
-	// "foobar"
-	// "foo bar"
-	// [1, 2];
-	// {"foo": "bar"}
-	// `
-	//
-	// 	tests := []struct {
-	// 		expectedType    token.TokenType
-	// 		expectedLiteral string
-	// 	}{}
-	//
-	// 	l := New(input)
-	//
-	// 	for i, tt := range tests {
-	// 		tok := l.NextToken()
-	//
-	// 		if tok.Type != tt.expectedType {
-	// 			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q",
-	// 				i, tt.expectedType, tok.Type)
-	// 		}
-	//
-	// 		if tok.Literal != tt.expectedLiteral {
-	// 			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q",
-	// 				i, tt.expectedLiteral, tok.Literal)
-	// 		}
-	// 	}
 }

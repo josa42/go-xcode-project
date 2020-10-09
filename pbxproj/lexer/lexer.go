@@ -21,9 +21,8 @@ func New(input string) *Lexer {
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
-	l.skipWhitespace()
-	l.skipLineComment()
-	l.skipComment()
+	for l.skipWhitespace() || l.skipLineComment() || l.skipComment() {
+	}
 
 	switch l.ch {
 	case '=':
@@ -39,10 +38,13 @@ func (l *Lexer) NextToken() token.Token {
 		l.assign = false
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
+		l.assign = false
 	case '(':
 		tok = newToken(token.LPAREN, l.ch)
+		l.assign = true
 	case ')':
 		tok = newToken(token.RPAREN, l.ch)
+		l.assign = false
 	case '"':
 		if l.assign {
 			tok.Type = token.STRING
@@ -71,24 +73,30 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func (l *Lexer) skipWhitespace() {
+func (l *Lexer) skipWhitespace() bool {
+	found := false
 	for isWhitespace(l.ch) {
 		l.readChar()
+		found = true
 	}
+	return found
 }
 
-func (l *Lexer) skipLineComment() {
+func (l *Lexer) skipLineComment() bool {
+	found := false
 	if l.ch == '/' && l.peekChar() == '/' {
 		for l.ch != '\n' {
 			l.readChar()
+			found = true
 		}
 	}
-
-	l.skipWhitespace()
+	return found
 }
 
-func (l *Lexer) skipComment() {
+func (l *Lexer) skipComment() bool {
+	found := false
 	if l.ch == '/' && l.peekChar() == '*' {
+		found = true
 		for l.ch != '*' || l.peekChar() != '/' {
 			l.readChar()
 		}
@@ -98,7 +106,7 @@ func (l *Lexer) skipComment() {
 		l.readChar()
 	}
 
-	l.skipWhitespace()
+	return found
 }
 
 func (l *Lexer) readChar() {
@@ -171,7 +179,7 @@ func isWhitespace(ch byte) bool {
 }
 
 func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '.'
 }
 
 func isDigit(ch byte) bool {
